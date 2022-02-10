@@ -3190,6 +3190,19 @@ e=>this._OnJobWorkerMessage(e)}catch(err){this._hadErrorCreatingWorker=true;this
 
 {
 self["C3_Shaders"] = {};
+self["C3_Shaders"]["grayscale"] = {
+	glsl: "varying mediump vec2 vTex;\nuniform lowp sampler2D samplerFront;\nuniform lowp float intensity;\nvoid main(void)\n{\nlowp vec4 front = texture2D(samplerFront, vTex);\nlowp float gray = front.r * 0.299 + front.g * 0.587 + front.b * 0.114;\ngl_FragColor = mix(front, vec4(gray, gray, gray, front.a), intensity);\n}",
+	wgsl: "%%SAMPLERFRONT_BINDING%% var samplerFront : sampler;\n%%TEXTUREFRONT_BINDING%% var textureFront : texture_2d<f32>;\n[[block]] struct ShaderParams {\nintensity : f32;\n};\n%%SHADERPARAMS_BINDING%% var<uniform> shaderParams : ShaderParams;\n%%C3_UTILITY_FUNCTIONS%%\n%%FRAGMENTINPUT_STRUCT%%\n%%FRAGMENTOUTPUT_STRUCT%%\n[[stage(fragment)]]\nfn main(input : FragmentInput) -> FragmentOutput\n{\nvar front : vec4<f32> = textureSample(textureFront, samplerFront, input.fragUV);\nvar gray : f32 = c3_grayscale(front.rgb);\nvar output : FragmentOutput;\noutput.color = mix(front, vec4<f32>(gray, gray, gray, front.a), shaderParams.intensity);\nreturn output;\n}",
+	blendsBackground: false,
+	usesDepth: false,
+	extendBoxHorizontal: 0,
+	extendBoxVertical: 0,
+	crossSampling: false,
+	mustPreDraw: false,
+	preservesOpaqueness: true,
+	animated: false,
+	parameters: [["intensity",0,"percent"]]
+};
 self["C3_Shaders"]["brightness"] = {
 	glsl: "varying mediump vec2 vTex;\nuniform lowp sampler2D samplerFront;\nuniform lowp float brightness;\nvoid main(void)\n{\nlowp vec4 front = texture2D(samplerFront, vTex);\nlowp float a = front.a;\nif (a != 0.0)\nfront.rgb /= front.a;\nfront.rgb += (brightness - 1.0);\nfront.rgb *= a;\ngl_FragColor = front;\n}",
 	wgsl: "%%SAMPLERFRONT_BINDING%% var samplerFront : sampler;\n%%TEXTUREFRONT_BINDING%% var textureFront : texture_2d<f32>;\n[[block]] struct ShaderParams {\nbrightness : f32;\n};\n%%SHADERPARAMS_BINDING%% var<uniform> shaderParams : ShaderParams;\n%%C3_UTILITY_FUNCTIONS%%\n%%FRAGMENTINPUT_STRUCT%%\n%%FRAGMENTOUTPUT_STRUCT%%\n[[stage(fragment)]]\nfn main(input : FragmentInput) -> FragmentOutput\n{\nvar front : vec4<f32> = c3_unpremultiply(textureSample(textureFront, samplerFront, input.fragUV));\nvar output : FragmentOutput;\noutput.color = vec4<f32>((front.rgb + (shaderParams.brightness - 1.0)) * front.a, front.a);\nreturn output;\n}",
@@ -3863,6 +3876,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.Spawn,
 		C3.Plugins.Sprite.Acts.SetAnimFrame,
 		C3.Plugins.System.Exps.random,
+		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.Sprite.Cnds.OnCreated,
 		C3.Plugins.Sprite.Acts.SetAnim,
 		C3.Plugins.System.Acts.SetVar,
@@ -3879,7 +3893,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.AnimationName,
 		C3.Plugins.System.Cnds.Every,
 		C3.Plugins.Sprite.Acts.SetEffectParam,
-		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.Sprite.Acts.SetScale,
 		C3.Plugins.Sprite.Acts.SubInstanceVar,
 		C3.Plugins.Sprite.Acts.AddInstanceVar,
@@ -3895,6 +3908,10 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Cnds.OnDestroyed,
 		C3.Plugins.Sprite.Acts.SetDefaultColor,
 		C3.Plugins.System.Exps.rgbex,
+		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
+		C3.Plugins.System.Cnds.EveryTick,
+		C3.Behaviors.Pathfinding.Acts.Stop,
+		C3.Plugins.Audio.Acts.Play,
 		C3.Plugins.Spritefont2.Cnds.CompareInstanceVar,
 		C3.Plugins.System.Acts.GoToLayout,
 		C3.Plugins.System.Acts.LoadState
@@ -3905,8 +3922,11 @@ self.C3_JsPropNameTable = [
 	{sleep: 0},
 	{status: 0},
 	{Name: 0},
+	{age: 0},
 	{Pathfinding: 0},
 	{Fish: 0},
+	{counter: 0},
+	{egg: 0},
 	{floors: 0},
 	{Place: 0},
 	{curser: 0},
@@ -3933,8 +3953,11 @@ self.C3_JsPropNameTable = [
 	{SaveStatus: 0},
 	{Sprite: 0},
 	{Sprite2: 0},
+	{topwater: 0},
+	{topDis: 0},
 	{Animal: 0},
-	{side: 0}
+	{side: 0},
+	{AGE_Hunger: 0}
 ];
 }
 
@@ -4059,6 +4082,9 @@ self.C3_ExpressionFuncs = [
 		},
 		() => 0,
 		() => "Watergrass",
+		() => 200,
+		() => "Stone",
+		() => 100,
 		() => "Cursor",
 		p => {
 			const n0 = p._GetNode(0);
@@ -4072,7 +4098,6 @@ self.C3_ExpressionFuncs = [
 		() => 0.25,
 		() => "brightness",
 		() => 125,
-		() => 100,
 		() => "SelectIcon",
 		() => 1.2,
 		() => "Left",
@@ -4092,10 +4117,22 @@ self.C3_ExpressionFuncs = [
 		() => "grubby_R",
 		() => "grubby_L",
 		() => "hungry",
-		() => 20,
+		p => {
+			const n0 = p._GetNode(0);
+			const v1 = p._GetNode(1).GetVar();
+			return () => (20 + (n0.ExpInstVar() * v1.GetValue()));
+		},
 		() => "eating",
-		() => 50,
-		() => 51,
+		p => {
+			const n0 = p._GetNode(0);
+			const v1 = p._GetNode(1).GetVar();
+			return () => (50 + (n0.ExpInstVar() * v1.GetValue()));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const v1 = p._GetNode(1).GetVar();
+			return () => (51 + (n0.ExpInstVar() * v1.GetValue()));
+		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => Math.round(f0(2, 4));
@@ -4105,7 +4142,6 @@ self.C3_ExpressionFuncs = [
 			return () => Math.round(f0(1, 3));
 		},
 		() => "Food",
-		() => "Stone",
 		() => "Decoration",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -4115,6 +4151,13 @@ self.C3_ExpressionFuncs = [
 			return () => f0(Math.round(f1(0, 255)), Math.round(f2(0, 255)), Math.round(f3(0, 255)));
 		},
 		() => -10,
+		() => "Age",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (0.2 + (n0.ExpInstVar() / 100));
+		},
+		() => 0.0001,
+		() => "Grayscale",
 		() => "Fish",
 		() => "name",
 		p => {
@@ -4133,6 +4176,20 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const n0 = p._GetNode(0);
 			return () => ("Status :" + n0.ExpInstVar());
+		},
+		() => "age",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => and("Age    :", Math.round(n0.ExpInstVar()));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpInstVar() + "'s egg");
+		},
+		() => "Status : hatching",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => and("Timer :", n0.ExpInstVar());
 		}
 ];
 
