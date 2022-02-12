@@ -3865,56 +3865,60 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.Sprite.Acts.MoveToTop,
 		C3.Plugins.System.Cnds.IsGroupActive,
-		C3.Plugins.Sprite.Cnds.IsVisible,
-		C3.Plugins.Mouse.Cnds.OnObjectClicked,
-		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
-		C3.Plugins.Sprite.Cnds.IsOverlapping,
-		C3.Plugins.Sprite.Cnds.PickDistance,
-		C3.Plugins.Sprite.Exps.X,
-		C3.Plugins.System.Cnds.TriggerOnce,
-		C3.Plugins.Sprite.Acts.Destroy,
-		C3.Plugins.Sprite.Acts.Spawn,
-		C3.Plugins.Sprite.Acts.SetAnimFrame,
-		C3.Plugins.System.Exps.random,
-		C3.Plugins.Sprite.Acts.SetInstanceVar,
-		C3.Plugins.Sprite.Cnds.OnCreated,
-		C3.Plugins.Sprite.Acts.SetAnim,
-		C3.Plugins.System.Acts.SetVar,
-		C3.Plugins.System.Cnds.CompareVar,
-		C3.Plugins.Sprite.Acts.SetMirrored,
-		C3.Plugins.System.Cnds.Else,
-		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Plugins.Mouse.Cnds.IsOverObject,
 		C3.Plugins.Sprite.Acts.SetVisible,
 		C3.Plugins.Sprite.Acts.SetPos,
+		C3.Plugins.Sprite.Exps.X,
 		C3.Plugins.Spritefont2.Acts.MoveToTop,
 		C3.Plugins.Spritefont2.Acts.SetPos,
+		C3.Plugins.Sprite.Cnds.IsOverlapping,
 		C3.Plugins.Spritefont2.Acts.SetText,
 		C3.Plugins.Sprite.Exps.AnimationName,
+		C3.Plugins.System.Cnds.Else,
 		C3.Plugins.System.Cnds.Every,
 		C3.Plugins.Sprite.Acts.SetEffectParam,
+		C3.Plugins.Mouse.Cnds.OnObjectClicked,
+		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.Sprite.Acts.SetScale,
+		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
+		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
 		C3.Plugins.Sprite.Acts.SubInstanceVar,
 		C3.Plugins.Sprite.Acts.AddInstanceVar,
+		C3.Plugins.Sprite.Acts.SetAnim,
 		C3.Plugins.System.Acts.SaveState,
 		C3.Plugins.System.Cnds.OnSaveComplete,
 		C3.Plugins.System.Acts.Wait,
+		C3.Plugins.Sprite.Cnds.IsVisible,
 		C3.Plugins.System.Cnds.PickRandom,
 		C3.Behaviors.Pathfinding.Cnds.IsMoving,
 		C3.Behaviors.Pathfinding.Acts.FindPath,
 		C3.Behaviors.Pathfinding.Acts.StartMoving,
 		C3.Plugins.Sprite.Cnds.CompareX,
 		C3.Behaviors.Pathfinding.Cnds.OnArrived,
+		C3.Plugins.Sprite.Cnds.PickDistance,
+		C3.Plugins.System.Exps.random,
 		C3.Plugins.Sprite.Cnds.OnDestroyed,
-		C3.Plugins.Sprite.Acts.SetDefaultColor,
-		C3.Plugins.System.Exps.rgbex,
-		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
+		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.System.Cnds.EveryTick,
 		C3.Behaviors.Pathfinding.Acts.Stop,
 		C3.Plugins.Audio.Acts.Play,
+		C3.Plugins.Sprite.Acts.Spawn,
+		C3.Plugins.Sprite.Cnds.OnCreated,
+		C3.Plugins.Sprite.Acts.SetDefaultColor,
+		C3.Plugins.System.Exps.rgbex,
+		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
+		C3.Behaviors.Pathfinding.Acts.SetSpeed,
+		C3.Plugins.System.Cnds.TriggerOnce,
+		C3.Plugins.System.Acts.SetVar,
+		C3.Plugins.System.Cnds.CompareVar,
+		C3.Plugins.Spritefont2.Acts.SetInstanceVar,
+		C3.Plugins.System.Cnds.Repeat,
 		C3.Plugins.Spritefont2.Cnds.CompareInstanceVar,
 		C3.Plugins.System.Acts.GoToLayout,
-		C3.Plugins.System.Acts.LoadState
+		C3.Plugins.System.Acts.LoadState,
+		C3.Plugins.Particles.Cnds.IsSpraying,
+		C3.Plugins.Sprite.Acts.SetAnimFrame,
+		C3.Plugins.Sprite.Acts.SetMirrored
 	];
 };
 self.C3_JsPropNameTable = [
@@ -3955,9 +3959,14 @@ self.C3_JsPropNameTable = [
 	{Sprite2: 0},
 	{topwater: 0},
 	{topDis: 0},
+	{event: 0},
+	{event_text: 0},
+	{logo: 0},
 	{Animal: 0},
-	{side: 0},
-	{AGE_Hunger: 0}
+	{AGE_Hunger: 0},
+	{Reproduction_Time: 0},
+	{mating_chance: 0},
+	{side: 0}
 ];
 }
 
@@ -4062,29 +4071,6 @@ self.C3_ExpressionFuncs = [
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject();
 		},
-		() => "planting",
-		() => "Gruppy",
-		() => "Shove",
-		() => 2,
-		() => 1,
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => Math.round(f0(0, 3));
-		},
-		() => 3,
-		p => {
-			const n0 = p._GetNode(0);
-			return () => n0.ExpInstVar();
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => Math.round(f0(0, 1));
-		},
-		() => 0,
-		() => "Watergrass",
-		() => 200,
-		() => "Stone",
-		() => 100,
 		() => "Cursor",
 		p => {
 			const n0 = p._GetNode(0);
@@ -4097,12 +4083,24 @@ self.C3_ExpressionFuncs = [
 		() => "",
 		() => 0.25,
 		() => "brightness",
+		() => 0,
 		() => 125,
+		() => 100,
 		() => "SelectIcon",
 		() => 1.2,
+		() => 1,
 		() => "Left",
 		() => "Right",
+		() => 5,
+		() => "Watergrass",
+		() => "Foxtail",
+		() => 2,
 		() => "stone",
+		() => 3,
+		() => "Gruppy",
+		() => 4,
+		() => "Snail",
+		() => "Shove",
 		() => "Save",
 		() => "mysave",
 		() => "idle",
@@ -4116,6 +4114,8 @@ self.C3_ExpressionFuncs = [
 		},
 		() => "grubby_R",
 		() => "grubby_L",
+		() => "Snail_L",
+		() => "Snail_R",
 		() => "hungry",
 		p => {
 			const n0 = p._GetNode(0);
@@ -4134,6 +4134,11 @@ self.C3_ExpressionFuncs = [
 			return () => (51 + (n0.ExpInstVar() * v1.GetValue()));
 		},
 		p => {
+			const n0 = p._GetNode(0);
+			const v1 = p._GetNode(1).GetVar();
+			return () => (1 + (n0.ExpInstVar() * v1.GetValue()));
+		},
+		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => Math.round(f0(2, 4));
 		},
@@ -4142,15 +4147,8 @@ self.C3_ExpressionFuncs = [
 			return () => Math.round(f0(1, 3));
 		},
 		() => "Food",
+		() => "Stone",
 		() => "Decoration",
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const f1 = p._GetNode(1).GetBoundMethod();
-			const f2 = p._GetNode(2).GetBoundMethod();
-			const f3 = p._GetNode(3).GetBoundMethod();
-			return () => f0(Math.round(f1(0, 255)), Math.round(f2(0, 255)), Math.round(f3(0, 255)));
-		},
-		() => -10,
 		() => "Age",
 		p => {
 			const n0 = p._GetNode(0);
@@ -4158,11 +4156,39 @@ self.C3_ExpressionFuncs = [
 		},
 		() => 0.0001,
 		() => "Grayscale",
+		() => -10,
+		() => 25,
+		() => "Animal_type",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const f2 = p._GetNode(2).GetBoundMethod();
+			const f3 = p._GetNode(3).GetBoundMethod();
+			return () => f0(Math.round(f1(0, 255)), Math.round(f2(0, 255)), Math.round(f3(0, 255)));
+		},
+		() => "Animal_movement",
+		() => 20,
+		() => "Reproduction",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => v0.GetValue();
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpInstVar();
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => Math.round(f0(1, 100));
+		},
+		() => "Congrats, Your gruppy is laying eggs.",
+		() => 30,
+		() => "Congrats, Your Snail is laying eggs.",
 		() => "Fish",
 		() => "name",
 		p => {
 			const n0 = p._GetNode(0);
-			return () => and("Durable :", n0.ExpInstVar());
+			return () => and("Durable :", Math.round(n0.ExpInstVar()));
 		},
 		() => "status",
 		p => {
@@ -4171,7 +4197,7 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const n0 = p._GetNode(0);
-			return () => and("Hungry :", n0.ExpInstVar());
+			return () => and("Hungry :", Math.round(n0.ExpInstVar()));
 		},
 		p => {
 			const n0 = p._GetNode(0);
@@ -4190,7 +4216,18 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const n0 = p._GetNode(0);
 			return () => and("Timer :", n0.ExpInstVar());
-		}
+		},
+		() => "planting",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => Math.round(f0(0, 3));
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => Math.round(f0(0, 1));
+		},
+		() => 2000,
+		() => 3000
 ];
 
 
