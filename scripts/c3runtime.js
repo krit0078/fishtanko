@@ -3908,11 +3908,12 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.rgbex,
 		C3.Plugins.Sprite.Cnds.IsOutsideLayout,
 		C3.Behaviors.Pathfinding.Acts.SetSpeed,
+		C3.Plugins.System.Cnds.ForEach,
+		C3.Plugins.System.Cnds.Repeat,
+		C3.Plugins.Spritefont2.Acts.SetInstanceVar,
 		C3.Plugins.System.Cnds.TriggerOnce,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.System.Cnds.CompareVar,
-		C3.Plugins.Spritefont2.Acts.SetInstanceVar,
-		C3.Plugins.System.Cnds.Repeat,
 		C3.Plugins.Spritefont2.Cnds.CompareInstanceVar,
 		C3.Plugins.System.Acts.GoToLayout,
 		C3.Plugins.System.Acts.LoadState,
@@ -3927,6 +3928,7 @@ self.C3_JsPropNameTable = [
 	{status: 0},
 	{Name: 0},
 	{age: 0},
+	{Reproduction_Time: 0},
 	{Pathfinding: 0},
 	{Fish: 0},
 	{counter: 0},
@@ -3964,7 +3966,6 @@ self.C3_JsPropNameTable = [
 	{logo: 0},
 	{Animal: 0},
 	{AGE_Hunger: 0},
-	{Reproduction_Time: 0},
 	{mating_chance: 0},
 	{side: 0}
 ];
@@ -4166,13 +4167,13 @@ self.C3_ExpressionFuncs = [
 			const f3 = p._GetNode(3).GetBoundMethod();
 			return () => f0(Math.round(f1(0, 255)), Math.round(f2(0, 255)), Math.round(f3(0, 255)));
 		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (1 * v0.GetValue());
+		},
 		() => "Animal_movement",
 		() => 20,
 		() => "Reproduction",
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => v0.GetValue();
-		},
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpInstVar();
@@ -4182,6 +4183,7 @@ self.C3_ExpressionFuncs = [
 			return () => Math.round(f0(1, 100));
 		},
 		() => "Congrats, Your gruppy is laying eggs.",
+		() => 0.5,
 		() => 30,
 		() => "Congrats, Your Snail is laying eggs.",
 		() => "Fish",
